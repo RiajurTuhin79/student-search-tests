@@ -1,0 +1,36 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# Environment
+.env
+*.env.*
+
+# Playwright test results
+allure-results/
+playwright-report/
+test-results/
+*.zip
+
+# Playwright storage state
+*-user-storage.json
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# AWS/CI/CD artifacts
+build/
+dist/
+coverage/
+*.tsbuildinfo
+
+# VSCode settings
+.vscode/
+
+# TypeScript output (if compiled)
+#*.js
+#*.js.map

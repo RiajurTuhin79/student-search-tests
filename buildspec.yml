@@ -1,0 +1,46 @@
+version: 0.2
+
+env:
+  variables:
+    ENV: dev  # Change to 'stage' in separate pipeline or override in CodeBuild
+    REPORT_PATH: "reports/$ENV"
+  secrets-manager:
+    MAIL_USER: your-secrets:MAIL_USER
+    MAIL_PASS: your-secrets:MAIL_PASS
+    SLACK_WEBHOOK: your-secrets:SLACK_WEBHOOK
+    AWS_ACCESS_KEY_ID: your-secrets:AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: your-secrets:AWS_SECRET_ACCESS_KEY
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install
+      - npx playwright install
+
+  pre_build:
+    commands:
+      - echo Setting environment config...
+      - cp .env.$ENV .env
+
+  build:
+    commands:
+      - echo Running Playwright tests for $ENV...
+      - npx playwright test || true
+      - echo Generating HTML report...
+      - npx playwright show-report --output=playwright-report
+
+  post_build:
+    commands:
+      - echo Uploading report to S3...
+      - aws s3 cp playwright-report/ s3://student-search-test-report/$REPORT_PATH/ --recursive
+
+      - echo Running globalTeardown to send Slack and Email notifications...
+      - node -r ts-node/register globalTeardown.ts
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
