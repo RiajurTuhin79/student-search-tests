@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/poManager.fixture';
 
-test('Valied Login Test', async ({ loginPageFixture, page }) => {
+test.only('Valied Login Test', async ({ loginPageFixture, page }) => {
 
     //await loginPage.goToLoginPage();
     await loginPageFixture.validLogin("tuhin79@gmail.com", "Dhaka1216!");
